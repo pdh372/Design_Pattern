@@ -289,7 +289,7 @@ class FrontendDeveloper implements Developer {
     private codeAngular() : void {};
 }
 
-public class Project {
+class Project {
 
     private _developers : Developer[];
 
