@@ -26,9 +26,9 @@ Five fundamental principles includes:
 
 This idea help developer decrease class's complex, it would be better if a class just responsibility one purpose.
 
-***Example***
+**Example**:
 
-> **UpdateUser** class execute many request.
+**UpdateUser** class execute many request.
 
 ```typescript
 class DBHelper {
@@ -44,7 +44,7 @@ class DBHelper {
 }
 ```
 
-> We should segregation into classes to be responsible for each type
+We should segregation into classes to be responsible for each type
 
 ```typescript
 public class DBConnection {
@@ -78,7 +78,7 @@ The idea of ​​this principle is that when implementing new features, instead
 
 **Example**: Previously, the logic to handle the shipping of an order was placed inside the Order class.
 
-Giả sử hệ thống cần bổ sung thêm một phương thức vận chuyển mới, chúng ta lại phải bổ sung một case nữa trong method calculateShipping. Điều này sẽ làm code trở nên rất khó quản lý.
+Assuming the system needs to add a new shipping method, we have to add another case in the **calculateShipping** method. This will make the code very difficult to manage.
 
 ```typescript
 public class Order {
@@ -95,10 +95,10 @@ public class Order {
 }
 ```
 
-Thay vào đó, chúng ta nên tách rời logic xử lý tính phí vận chuyển vào một Shipping interface chẳng hạn. Shipping interface sẽ có nhiều implementation ứng với từng hình thức vận chuyển: GroundShipping, AirShipping,...
+Instead, we should decouple the shipping handling logic into a Shipping interface, for example. **Shipping interface** will have many implementations for each mode of transportation: **GroundShipping**, **AirShipping**,...
 
 ```typescript
-Shipping interface {
+interface Shipping {
     calculate() : number;
 }
 
@@ -114,8 +114,7 @@ class AirShipping implements Shipping {
     }
 }
 
-public class Order {
-    private shipping Shipping;
+class Order {
     public calculateShipping(shippingMethod : Shipping) : number {
         return shippingMethod.calculate();
     }
@@ -155,7 +154,7 @@ class Dog implements Animal {
 }
 ```
 
-The workaround here would be: create a **FlyableAnimal** interface as follows
+The work around here would be: create a **FlyableAnimal** interface as follows
 
 ```typescript
 public interface Animal {
