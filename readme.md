@@ -68,6 +68,8 @@ public class ProductRepository {
 }
 ```
 
+---
+
 ### 2. Open/closed principle
 
 > Software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification.
@@ -81,7 +83,7 @@ Giả sử hệ thống cần bổ sung thêm một phương thức vận chuy�
 ```typescript
 public class Order {
 
-    public long calculateShipping(shippingMethod : string) {
+    public calculateShipping(shippingMethod : string) : number {
         if (shippingMethod === 'GROUND') {
             // Calculate for ground shipping
         } else if (shippingMethod === 'AIR') {
@@ -93,10 +95,10 @@ public class Order {
 }
 ```
 
-Thay vào đó, chúng ta nên tách rời logic xử lý tính phí vận chuyển vào một interface Shipping chẳng hạn. Interface Shipping sẽ có nhiều implementation ứng với từng hình thức vận chuyển: GroundShipping, AirShipping,...
+Thay vào đó, chúng ta nên tách rời logic xử lý tính phí vận chuyển vào một Shipping interface chẳng hạn. Shipping interface sẽ có nhiều implementation ứng với từng hình thức vận chuyển: GroundShipping, AirShipping,...
 
 ```typescript
-interface Shipping {
+Shipping interface {
     calculate() : number;
 }
 
@@ -119,6 +121,8 @@ public class Order {
     }
 }
 ```
+
+---
 
 ### 3. Liskov substitution principle
 
@@ -173,4 +177,134 @@ public class Dog implements Animal {
 }
 ```
 
+---
+
 ### 4. Interface segregation principle
+
+> Many client-specific interfaces are better than one general-purpose interface.
+
+This principle can be understood that instead of writing an interface for a general purpose, we should **separate into many small interfaces for specific purposes**. We should not force the client to implement methods that the client does not need.
+
+**Example**:
+
+We have a **Animal** interface like this:
+
+```typescript
+interface Animal {
+
+    eat() : void;
+
+    void run();
+
+    void fly();
+
+}
+```
+
+we have 2 class **Dog** and **Snake** implement interface **Animal**. But it make no sense. That is how to **Dog()** **Fly()** and **Snake** **Run()**
+
+Instead of, we should separate into 3 small interface like this
+
+```typescript
+interface Animal {
+
+    eat() : void;
+}
+
+interface RunnableAnimal extends Animal {
+
+    run() : void;
+}
+
+interface FlyableAnimal extends Animal {
+
+    fly() : void;
+}
+```
+
+---
+
+### 5. Dependency inversion principle
+
+> Depend on abstractions, not on concretions.
+
+The idea of the principle is that hight-level modules should not depend on low-level modules, both should depend on abstraction.
+
+**Example**: we have two modules low-level **BackendDev** and **FrontendDev**. And a module hight-level **Project**
+
+````typescript
+class BackendDev {
+
+    private void codeNodeJS() {};
+}
+
+class FrontendDev {
+
+    private void codeJS() {};
+}
+
+public class Project {
+
+    _backendDev = new BackendDev();
+    _frontendDev = new FrontendDev();
+
+    public build() : void {
+        _backendDev.codeNodeJS();
+        _frontendDev.codeJS();
+    }
+}
+````
+
+Suppose if later, the project changes technology. Backend developers don't code **NodeJS** anymore but switch to **C#** code. Frontend developers don't code **pure JS** anymore but upgrade to **JS frameworks**. Obviously **we have to fix not only the code in the low-level modules (BackendDev and FrontendDev) but also the code in the high-level modules (Project) that are using those low-level modules**. This shows that **high-level modules are having to depend on low-level modules**.
+
+At this point, we will add a **Developer abstraction** to which the above modules depend:
+
+```typescript
+interface Developer {
+
+    develop() : void;
+}
+
+class BackendDeveloper implements Developer {
+
+    public develop() : void {
+        codeNodeJS();
+        // codeCSharp();
+    }
+
+    private codeNodeJS() : void {};
+
+    private codeCSharp() : void {};
+}
+
+class FrontendDeveloper implements Developer {
+
+    public develop() : void {
+        codeJS();
+        // codeAngular();
+    }
+
+    private codeJS() : void {};
+
+    private codeAngular() : void {};
+}
+
+public class Project {
+
+    private _developers : Developer[];
+
+    constructor(developers : Developers[]) {
+        this._developers = developers;
+    }
+
+    public build() : void {
+        developers.forEach(developer => developer.develop());
+    }
+}
+```
+
+---
+
+<!-- #### References
+
+> [Quick study of divine SOLID](https://kipalog.com/posts/Tim-hieu-nhanh-SOLID-than-thanh) -->
